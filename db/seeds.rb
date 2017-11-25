@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Question.create!(YAML::load_file(Rails.root.join('db', 'seeds', 'questions.yml')))
+Answer.create!(YAML::load_file(Rails.root.join('db', 'seeds', 'answers.yml')))
+Player.create(name: 'Mr. Random', role: :random, status: :in)
