@@ -20,4 +20,12 @@ ActiveRecord::Schema.define(version: 20171125135953) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.string "text"
+    t.integer "gaps"
+    t.integer "round"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
 end
