@@ -1,0 +1,9 @@
+%h1 Empieza a jugar
+= form_for(:player, url: games_enter_player_path) do |f|
+  = f.text_field :name, placeholder: 'Nombre'
+  = f.submit 'Entrar'
+
+%h2 Jugadores en la partida:
+%ul
+- in_players.each do |player|
+  %li #{player.name} #{' (Zar)' if player.tzar?}
