@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
-  helper_method :current_player, :current_question, :previous_questions, :missing_answers,
-                :current_player_unused_answers, :in_players
+  helper_method :current_player, :current_question, :previous_questions, :missing_answers, :total_answers,
+                :current_player_unused_answers, :players, :tzar, :in_players
   after_action :broadcast_action, only: %i(clear enter_player drop_player leave_answer choose_winner_answer)
 
   def clear
@@ -112,7 +112,11 @@ class GamesController < ApplicationController
   end
 
   def missing_answers
-    Player.in.where.not(role: :tzar).count - current_question.answers.count
+    total_answers - current_question.answers.count
+  end
+
+  def total_answers
+    Player.in.where.not(role: :tzar).count
   end
 
   def current_player_unused_answers
@@ -121,6 +125,14 @@ class GamesController < ApplicationController
 
   def broadcast_action
     ActionCable.server.broadcast('game', nil)
+  end
+
+  def players
+    Player.all.sort_by { |player| -player.score }
+  end
+
+  def tzar
+    Player.tzar.first
   end
 
   def in_players

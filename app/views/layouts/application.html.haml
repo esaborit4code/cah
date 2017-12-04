@@ -12,5 +12,6 @@
     = csrf_meta_tag
 
   %body
-
-    = yield
+    .grid-container
+      .grid-x.grid-padding-x
+        .small-12.cell= yield

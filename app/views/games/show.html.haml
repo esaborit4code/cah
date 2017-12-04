@@ -1,49 +1,41 @@
 %p
   Jugador: #{current_player.name}.
-  #{ link_to 'Salir', games_drop_player_path, method: :post }.
+  #{ button_to 'Salir de la partida', games_drop_player_path, method: :post, class: 'tiny button' }
 
 - current_player_answer = current_question.answers.find_by(player: current_player)
 - already_answered = current_player_answer.present?
 - must_answer = current_player.player? && current_player_answer.blank?
 
-%h1
-  = "##{current_question.round}: #{current_question.text}"
-- if already_answered
-  %h2 Tu respuesta:
-  = current_player_answer.text
+.card.card--question #{current_question.text}
+
+%p Zar: #{tzar.name}#{ ' (Tú)' if current_player.tzar? }
 
 - unless missing_answers.zero?
-  %h2 Faltan #{missing_answers} respuestas
+  %p Faltan #{missing_answers} de #{total_answers} respuestas
 - else
-  - if current_player.tzar?
-    %h2 Elige la respuesta ganadora
-    - current_question.answers.each do |answer|
-      = form_for :answer, url: games_choose_winner_answer_path, method: :post do |f|
-        = f.hidden_field :id, value: answer.id
-        = f.submit answer.text
-  - else
-    %h2 Respuestas
-    %ul
-    - current_question.answers.each do |answer|
-      %li= answer.text
+  - current_question.answers.each do |answer|
+    .card.card--answer
+      = answer.text
+      - if current_player.tzar?
+        = form_for :answer, url: games_choose_winner_answer_path, method: :post do |f|
+          = f.hidden_field :id, value: answer.id
+          = f.submit 'Elegir', class: 'button expanded no-margin margin-top'
 
-- if must_answer
-  %h2 Elige tu respuesta
-  - current_player_unused_answers.each do |answer|
-    = form_for :answer, url: games_leave_answer_path, method: :post do |f|
-      = f.hidden_field :id, value: answer.id
-      = f.submit answer.text
-- else
-  %h2 Tus respuestas
-  %ul
-    - current_player_unused_answers.each do |answer|
-      %li= answer.text
+%h2 Tus respuestas
+- current_player_unused_answers.each do |answer|
+  .card.card--answer
+    = answer.text
+    - if must_answer
+      = form_for :answer, url: games_leave_answer_path, method: :post do |f|
+        = f.hidden_field :id, value: answer.id
+        = f.submit 'Usar', class: 'button expanded no-margin margin-top'
+
 
 %h3 Puntuaciones
 %ul
-  - max_score = Player.all.map(&:score).max
-  - Player.all.sort_by { |player| -player.score }.each do |player|
-    - player_and_score = "#{player.name}#{ ' (Zar)' if player.tzar? }: #{player.score}"
+  - max_score = players.map(&:score).max
+  - players.each do |player|
+    - player_and_score = "#{player.name}: #{player.score}"
     %li
       - if player.score == max_score
         %b= player_and_score
@@ -51,15 +43,12 @@
         = player_and_score
 
 - if previous_questions.any?
-  %h3 Preguntas anteriores
-  %ul
-    - previous_questions.each do |question|
-      %li
-        = "##{question.round}: #{question.text}"
-        %ul
-          - question.answers.order(winner: :desc).each do |answer|
-            %li
-              - if answer.winner?
-                %b #{answer.text} (#{answer.player.name})
-              - else
-                = answer.text
+  %h3 Preguntas anteriores (#{current_question.round - 1})
+  - previous_questions.each do |question|
+    .card.card--question= question.text
+    - question.answers.order(winner: :desc).each do |answer|
+      .card.card--answer
+        %span= answer.text
+        - if answer.winner?
+          %div
+            %span.label Ganadora

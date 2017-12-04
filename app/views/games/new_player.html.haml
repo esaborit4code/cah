@@ -1,9 +1,11 @@
-%h1 Empieza a jugar
-= form_for(:player, url: games_enter_player_path) do |f|
-  = f.text_field :name, placeholder: 'Nombre'
-  = f.submit 'Entrar'
+.grid-x
+  .small-12.medium-6.medium-offset-3.cell
+    %h1 Empieza a jugar
+    = form_for(:player, url: games_enter_player_path) do |f|
+      = f.text_field :name, placeholder: 'Nombre'
+      = f.submit 'Entrar', class: 'button expanded'
 
-%h2 Jugadores en la partida:
-%ul
-- in_players.each do |player|
-  %li #{player.name} #{' (Zar)' if player.tzar?}
+    %h2 Jugadores en la partida:
+    %ul
+    - in_players.each do |player|
+      %li #{player.name} #{' (Zar)' if player.tzar?}
