@@ -36,6 +36,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'pg'
 gem 'haml-rails'
 gem 'foundation-rails', '~> 6.3'
+gem 'webpacker'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
